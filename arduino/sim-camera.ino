@@ -15,6 +15,8 @@
 
 #define CHUNK_SIZE 10000
 
+#define BASE_URL "https://replaceme"
+
 int interval = 600; // Default interval between 2 shots
 
 void (*resetFunc)(void) = 0;
@@ -166,7 +168,7 @@ void setup()
   serial->listen();
   Serial.println(jpglen);
 
-  uint16_t rc = sim800l->doGet("https://sim.yavin.space/interval", 65535);
+  uint16_t rc = sim800l->doGet(BASE_URL "/interval", 65535);
   if (rc == 200)
   {
     // Success, output the data received on the serial
@@ -202,12 +204,12 @@ void setup()
     if (chunkIndex == nbChunks - 1)
     {
       currentSize = totalSize % (CHUNK_SIZE + 1);
-      sprintf(url, "https://sim.yavin.space/upload/%lu/last", id);
+      sprintf(url, BASE_URL "/upload/%lu/last", id);
     }
     else
     {
       currentSize = CHUNK_SIZE;
-      sprintf(url, "https://sim.yavin.space/upload/%lu/%lu", id, chunkIndex);
+      sprintf(url, BASE_URL "/upload/%lu/%lu", id, chunkIndex);
     }
     Serial.println(url);
     uint16_t rc = sim800l->doPost(url, "image/jpeg", currentSize, &SomeCallback, 65535, 4294967295);
