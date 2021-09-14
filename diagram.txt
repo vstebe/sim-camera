@@ -1,0 +1,13 @@
+@startuml
+participant Camera as camera
+participant Arduino as arduino
+participant "Remote Server (via SIM800L)" as server #grey
+arduino -> camera: Asks for a picture
+camera --> arduino: Raw picture transmitted in JPG via TTL
+arduino -> server : Asks for the delay before the next shot (GET /interval)
+server --> arduino : Returns the  delay to wait (ex: 3600)
+arduino -> server : Sends the Chunk-1 of the raw picture (POST /upload/1)
+arduino -> server : Sends the Chunk-n of the raw picture (POST /upload/n)
+arduino -> server : Sends the last chunk of the raw picture (POST /upload/last)
+...Sleep until the next shot (ex: 3600)...
+@enduml
