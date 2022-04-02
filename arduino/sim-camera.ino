@@ -15,9 +15,9 @@
 
 #define CHUNK_SIZE 10000
 
-#define BASE_URL "https://replaceme"
+#define BASE_URL "https://sim.yavin.space"
 
-int interval = 600; // Default interval between 2 shots
+long interval = 600L; // Default interval between 2 shots
 
 void (*resetFunc)(void) = 0;
 
@@ -93,9 +93,6 @@ void setup()
   // Equivalent line with the debug enabled on the Serial
   sim800l = new SIM800L((Stream *)serial, SIM800_RST_PIN, 200, 512, (Stream *)&Serial);
 
-  // Setup module for GPRS communication
-  setupModule();
-
   digitalWrite(MOSFET_PIN, HIGH);
   digitalWrite(MOSFET_LED_PIN, HIGH);
 
@@ -145,7 +142,6 @@ void setup()
     Serial.println(F("GPRS not connected !"));
     Serial.println(F("Reset the module."));
     sim800l->reset();
-    setupModule();
     return;
   }
 
@@ -176,13 +172,12 @@ void setup()
     Serial.print(sim800l->getDataSizeReceived());
     Serial.println(F(" bytes)"));
     Serial.print(F("Interval is : "));
-    interval = atoi(sim800l->getDataReceived());
+    interval = atol(sim800l->getDataReceived());
     Serial.println(interval);
 
-    if (interval < 300)
-      interval = 300;
-    if (interval > 43200)
-      interval = 43200;
+    if (interval < 0)
+      interval = 0;
+
   }
   else
   {
@@ -212,7 +207,7 @@ void setup()
       sprintf(url, BASE_URL "/upload/%lu/%lu", id, chunkIndex);
     }
     Serial.println(url);
-    uint16_t rc = sim800l->doPost(url, "image/jpeg", currentSize, &SomeCallback, 65535, 4294967295);
+    uint16_t rc = sim800l->doPost(url, "image/jpeg", currentSize, &CameraCallback, 65535, 4294967295);
     if (rc == 200)
     {
       // Success, output the data received on the serial
@@ -273,11 +268,18 @@ void setup()
 
   digitalWrite(MOSFET_PIN, LOW);
   digitalWrite(MOSFET_LED_PIN, LOW);
-  for (uint8_t i = 0; i < (interval / 64); i++)
+  for (uint8_t i = 0; i < (interval / 64L); i++)
   {
+    Serial.println(String("i=") + i + "/" + (interval / 64L) + " (int=" + interval);
+    Serial.flush();
+
     for (uint8_t j = 0; j < 8; j++)
     {
       LowPower.powerDown(SLEEP_8S, ADC_ON, BOD_OFF);
+       Serial.println(String("j=") + j + "/8");
+       Serial.flush();
+
+
     }
 
     // Waking up the battery and prevent it to shut down by drawing some current
@@ -290,6 +292,6 @@ void setup()
   resetFunc();
 }
 
-void setupModule()
+void loop()
 {
 }
