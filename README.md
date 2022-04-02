@@ -20,7 +20,7 @@ The PCB is powered on 5V and is composed of
 * 5V->3.3V Regulator
 * A MOSFET used to shut down the SIM800L and the camera module when not in use.
 
-![PCB](=https://raw.githubusercontent.com/vstebe/sim-camera/main/pcb.png)
+![PCB](https://raw.githubusercontent.com/vstebe/sim-camera/main/pcb.png)
 
 Note that U5 is used for the camera and U6/U8 are resevered for later use.
 
