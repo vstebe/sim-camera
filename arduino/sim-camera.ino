@@ -15,7 +15,7 @@
 
 #define CHUNK_SIZE 10000
 
-#define BASE_URL "https://sim.yavin.space"
+#define BASE_URL "https://xxxx"
 
 long interval = 600L; // Default interval between 2 shots
 
